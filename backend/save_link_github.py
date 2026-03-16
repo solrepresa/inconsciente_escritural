@@ -8,7 +8,12 @@ from datetime import datetime
 
 # Configuración
 GITHUB_URL = 'https://github.com/solrepresa/inconsciente_escritural/tree/main/images'
-KNOWN_IMAGES_FILE = 'C:\\Users\\solre\\Desktop\\MAE\\4.TP_maquina\\web\\frontend\\data\\known_images.txt'  # Archivo para almacenar las direcciones conocidas
+from dotenv import load_dotenv
+load_dotenv()
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+_data_folder = os.path.abspath(os.path.join(BASE_DIR, os.getenv("FRONTEND_DATA_FOLDER", "../frontend/data")))
+KNOWN_IMAGES_FILE = os.path.join(_data_folder, "known_images.txt")
 
 
 def get_image_links(url):

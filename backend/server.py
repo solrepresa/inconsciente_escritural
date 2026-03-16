@@ -1,41 +1,45 @@
 from flask import Flask, send_from_directory, jsonify
 from flask_cors import CORS
+from dotenv import load_dotenv
 import os
 import subprocess
 import time
 import threading
 
+load_dotenv()
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})  # Permite solicitudes desde cualquier origen
+CORS(app, resources={r"/*": {"origins": "*"}})
 
-# Rutas a las carpetas de datos
-folder = 'C:/Users/solre/Desktop/MAE/4.TP_maquina/web/frontend/data'
-backend_folder = 'C:\\Users\\solre\\Desktop\\MAE\\4.TP_maquina\\web\\backend'
+# Rutas resueltas desde .env (relativas al directorio donde se ejecuta el servidor)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+folder = os.path.abspath(os.path.join(BASE_DIR, os.getenv("FRONTEND_DATA_FOLDER", "../frontend/data")))
+backend_folder = os.path.abspath(os.path.join(BASE_DIR, os.getenv("BACKEND_FOLDER", ".")))
 
 # Variable global
 ultima_url_procesada = ""
+
 
 def obtener_ultima_url(ruta_archivo):
     with open(ruta_archivo, 'r') as archivo:
         lineas = archivo.readlines()
         if lineas:
-            return lineas[-1].strip()  # Devuelve la última línea sin espacios adicionales
+            return lineas[-1].strip()
         return None
-
 
 
 def run_save_link_github():
     global ultima_url_procesada
     print("Hilo run_save_link_github iniciado")
-    venv_path = 'C:/Users/solre/Desktop/MAE/4.TP_maquina/web/backend/venv/Scripts/activate'
 
     while True:
         try:
-            command = f'"{venv_path}" && python "{os.path.join(backend_folder, "save_link_github.py")}"'
-            result = subprocess.run(command, capture_output=True, text=True, shell=True)
+            result = subprocess.run(
+                ["python", os.path.join(backend_folder, "save_link_github.py")],
+                capture_output=True, text=True
+            )
             print("Resultado:", result.stdout)
-            
+
             if result.returncode == 0:
                 print('URL updated successfully')
                 nueva_url = obtener_ultima_url(os.path.join(folder, 'known_images.txt'))
@@ -49,18 +53,19 @@ def run_save_link_github():
         except Exception as e:
             print('Error:', e)
             print('Tipo de error:', type(e))
-        time.sleep(20)  # Espera 20 segundos antes de ejecutar nuevamente
+        time.sleep(20)
 
 
 def run_send_url_to_openai():
     print("Hilo de send_url_to_openai iniciado")
-    venv_path = 'C:/Users/solre/Desktop/MAE/4.TP_maquina/web/backend/venv/Scripts/activate'
 
     try:
-        command = f'"{venv_path}" && python "{os.path.join(backend_folder, "send_url_to_openai.py")}"'
-        result = subprocess.run(command, capture_output=True, text=True, shell=True)
+        result = subprocess.run(
+            ["python", os.path.join(backend_folder, "send_url_to_openai.py")],
+            capture_output=True, text=True
+        )
         print("Resultado de send_url_to_openai:", result.stdout)
-        
+
         if result.returncode == 0:
             print('Script ejecutado exitosamente.')
         else:

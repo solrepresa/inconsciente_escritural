@@ -1,6 +1,7 @@
 ''' Código 2 - Unidad Cerebro. Este codigo tomas las url guardadas en un txt y las envia a open ai. El codigo devuelve un '''
 
 from openai import OpenAI
+import os
 
 client = OpenAI()
 
@@ -17,9 +18,15 @@ def guardar_texto(ruta_archivo, texto):
     with open(ruta_archivo, 'w') as archivo:
         archivo.write(texto)
 
+from dotenv import load_dotenv
+load_dotenv()
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+_data_folder = os.path.abspath(os.path.join(BASE_DIR, os.getenv("FRONTEND_DATA_FOLDER", "../frontend/data")))
+
 # Ruta del archivo que contiene las URLs
-ruta_archivo = 'C:/Users/solre/Desktop/MAE/4.TP_maquina/web/frontend/data/known_images.txt'
-ruta_archivo_salida = 'C:/Users/solre/Desktop/MAE/4.TP_maquina/web/frontend/data/text_output.txt'
+ruta_archivo = os.path.join(_data_folder, "known_images.txt")
+ruta_archivo_salida = os.path.join(_data_folder, "text_output.txt")
 
 # Obtener la última URL
 url = obtener_ultima_url(ruta_archivo)

@@ -1,6 +1,4 @@
 # Inconsciente Escritural
-
-**Motor interpretativo de instalación artística**  
 Maestría en Artes Electrónicas — UNTREF
 
 ---
@@ -106,21 +104,23 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. Configurar la clave de API de OpenAI
+### 4. Crear el archivo `.env`
+
+Copiar el archivo de ejemplo y completarlo:
 
 ```bash
-# Windows (PowerShell)
-$env:OPENAI_API_KEY = "sk-..."
-
-# macOS / Linux
-export OPENAI_API_KEY="sk-..."
+cp env.example .env
 ```
 
-### 5. Ajustar las rutas locales
+Editar `.env` con tus valores:
 
-En `server.py`, `save_link_github.py` y `send_url_to_openai.py`, reemplazar las rutas absolutas hardcodeadas con las rutas correspondientes en tu sistema.
+```
+FRONTEND_DATA_FOLDER=../frontend/data
+BACKEND_FOLDER=.
+OPENAI_API_KEY=sk-...
+```
 
-> **Nota:** En una versión futura estas rutas pueden centralizarse en un archivo `.env`.
+> ⚠️ **El archivo `.env` nunca se sube al repositorio** — ya está en el `.gitignore`. Es local y contiene tu API key. El archivo `.env.example` es solo la plantilla vacía que sí vive en el repo.
 
 ### 6. Iniciar el servidor
 
